@@ -1,14 +1,14 @@
 const express = require('express');
-const env = require('dotenv');
 const app = express();
 const mongoose = require('mongoose'); 
 const cors = require('cors');
+require('dotenv').config();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 //routes
 const authRoutes = require('./routes/auth');
 
-//environment variable or you can say constants
-env.config();
 
 //DB Connection
 const Connection = async () => {
@@ -20,12 +20,17 @@ const Connection = async () => {
     }
 }
 Connection();
+
+//middlewares
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(cors());
-app.use(express.json());
+
+
+//my routes
 app.use('/api',authRoutes);
 
+//starting a server
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT,() =>{
-    console.log(`server is running on port ${PORT} `);
-});
+app.listen(PORT, () => console.log(`Server is running successfully on PORT ${PORT}`));
