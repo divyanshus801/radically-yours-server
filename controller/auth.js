@@ -2,6 +2,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 // const bcrypt = require('bcrypt');
 
+
 const generateJwtToken = (_id, role) => {
     return jwt.sign({ _id, role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
@@ -84,6 +85,33 @@ exports.getUserList = (req,res) => {
         }
     })
 }
+
+//delete controllers
+exports.deleteUser = (req, res) => {
+    User.deleteOne({ _id: req.params.userId }).exec((err, user)=> {
+        if(err){
+            return res.status(400).json({
+                messaage: "User deletion failed"
+            })
+        }if(user){
+            res.status(200).json({
+                message: "user successfully deleted"
+            })
+        }
+    })
+    // let user = req.user;
+    // console.log(user);
+    // user.deleteOne((err, deletedUser) => {
+    //   if (err) {
+    //     return res.status(400).json({
+    //       error: "Failed to delete the User",
+    //     });
+    //   }
+    //   res.json({
+    //     message: "Successfully deleted user",
+    //   });
+    // });
+  };
 
 
 
