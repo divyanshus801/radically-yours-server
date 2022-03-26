@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 
 const generateJwtToken = (_id, role) => {
@@ -22,11 +22,11 @@ exports.signup = (req, res) => {
                 email,
                 passwordRepeat
             } = req.body;
-            // const hash_password = await bcrypt.hash(password, 10);
+            const hash_password = await bcrypt.hash(passwordRepeat, 10);
             const _user = new User({
                 fullName,
                 email,
-                password: passwordRepeat,
+                password: hash_password,
             });
             _user.save((error, user) => {
                 if (error) {
@@ -55,7 +55,7 @@ exports.signin = (req, res) => {
         .exec(async (error, user) => {
             if (error) return res.status(400).json({ error });
             if (user) {
-                if (req.body.password === user.password ) {
+                if (await user.authenticate(req.body.password)) {
                     const token = generateJwtToken(user._id, user.role);
                     const { _id, fullName, email } = user;
                     res.status(200).json({
@@ -81,7 +81,7 @@ exports.getUserList = (req,res) => {
             return res.status(400).json({ message: "Couldn't fetch users data"})
         }
         if(users){
-            return res.status(201).json({users})
+            return res.status(201).json(users)
         }
     })
 }

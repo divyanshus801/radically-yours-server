@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
     {
@@ -38,10 +38,10 @@ const userSchema = new mongoose.Schema(
 //     return `${this.firstName} ${this.lastName}`;
 // });
 
-// userSchema.methods = {
-//     authenticate: async function(password){
-//         return await bcrypt.compare(password, this.hash_password);
-//     }
-// };
+userSchema.methods = {
+    authenticate: async function(password){
+        return await bcrypt.compare(password, this.password);
+    }
+};
 
 module.exports = mongoose.model('User',userSchema);
